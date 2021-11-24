@@ -1,0 +1,6 @@
+__pycache__/
+data/
+env/
+google_sheets/
+daily.log
+.idea/
