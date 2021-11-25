@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 from helper import timethis, log
+from price_getter import MARKET_CAP_FILENAME
 
 # hardset constants, better not to change / parameterize
 LOGRET_NAN_THRESH = 5
@@ -26,14 +27,13 @@ CONFIG_FILENAME = os.path.join(dirname, "../config.json")
 with open(CONFIG_FILENAME, "r") as f:
     config = json.load(f)
 
-# MARKET_CAP_THRESH = 5000000000
 
 
 
 DISCARDED_PICKLE_FILENAME = os.path.join(dirname, "../data/discarded.pickle")
 SHARPE_CORR_PAIR_FILENAME = os.path.join(dirname, "../data/sharpe_corr_pairs.pickle")
 LOGRET_FILENAME = os.path.join(dirname, "../data/logret.csv")
-MARKET_CAP_FILENAME = os.path.join(dirname, "../data/market_cap.pickle")
+# MARKET_CAP_FILENAME = os.path.join(dirname, "../data/market_cap.pickle")
 EM_DATA_FILENAME = os.path.join(dirname, "../data/em_data.csv")
 
 INDIVIDUAL_SR_FILENAME = os.path.join(dirname, "../google_sheets/individual_SR.csv")
@@ -42,12 +42,6 @@ RAW_PAIRS_FILENAME = os.path.join(dirname, "../google_sheets/raw.csv")
 DISCARDED_STOCKS_FILENAME = os.path.join(dirname, "../google_sheets/discarded.csv")
 
 TRADING_DAYS_PER_YEAR = config["TRADING_DAYS_PER_YEAR"]
-
-"""
-NOTES:
-- market cap not automatically updated at the moment
-"""
-
 
 def individual_sharpe_sortino():
     """
@@ -276,8 +270,7 @@ def compute_data(use_cache=True, market_cap_filter=True) -> None:
             with open(MARKET_CAP_FILENAME, "rb") as f:
                 market_caps = pickle.load(f)
             for stock_name in primary_stock_stats.keys():
-                if stock_name in market_caps and px[stock_name].mean() * market_caps[stock_name][
-                    "outstanding"] > config["MARKET_CAP_THRESH"]:
+                if stock_name in market_caps and px[stock_name].mean() * market_caps[stock_name] > config["MARKET_CAP_THRESH"]:
                     stock.append(stock_name)
                 else:
                     discarded[stock_name].append("Insufficient market cap")
@@ -477,4 +470,4 @@ def get_downside_logret(logret: pd.DataFrame) -> pd.DataFrame:
 
 if __name__ == "__main__":
     compute_data(use_cache=False,
-                 market_cap_filter=False)
+                 market_cap_filter=True)

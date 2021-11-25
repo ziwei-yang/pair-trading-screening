@@ -3,6 +3,7 @@ import datetime as dt
 import os
 import pickle
 from collections import OrderedDict
+from pprint import pprint
 
 import akshare as ak
 import pandas as pd
@@ -15,6 +16,8 @@ CURRENT_DATA_DF_FILENAME = os.path.join(dirname, "../data/hk_stock_info.csv")
 STOCK_PRICE_PICKLE = os.path.join(dirname, "../data/em_data.pickle")
 STOCK_PRICE_FILENAME = os.path.join(dirname, "../data/em_data.csv")
 META_FILENAME = os.path.join(dirname, "../google_sheets/meta.csv")
+
+MARKET_CAP_FILENAME = os.path.join(dirname, "../data/market_cap.pickle")
 
 
 class DataMnt:
@@ -220,6 +223,35 @@ def get_stock_history(stock, startdate, enddate):
     response = response.json()
     return response
 
+def get_mcap(startdate, enddate):
+    """
+    gets the outstanding shares of all stocks
+    Args:
+        startdate:
+        enddate:
+
+    Returns:
+        None
+    """
+    from helper import STOCKS
+    mcap = {}
+    for stock in STOCKS:
+        query = f"http://192.168.2.4:8080/?querytype=stockhistory&ccassdateshift=0&startdate={startdate}&enddate={enddate}&stocklist={stock}&fields=amount"
+        res = requests.get(query)
+        res = res.json()
+        try:
+            data = res["res"]["res"][0]["content"]
+
+            cap = data[-1]['data']['amount']
+            time = data[-1]['dt']
+            mcap["date"] = time
+            mcap[stock] = cap
+        except KeyError:
+            continue
+
+    with open(MARKET_CAP_FILENAME, "wb") as f:
+        pickle.dump(mcap, f)
+
 
 if __name__ == "__main__":
     em_data_mnt = EMDataMnt()
@@ -228,9 +260,13 @@ if __name__ == "__main__":
 
     enddate = dt.datetime.now() - relativedelta(days=1)
     startdate = enddate - relativedelta(years=1)
+    yesterday = enddate - relativedelta(days=0)
 
     enddate = enddate.strftime(datetime_format)
     startdate = startdate.strftime(datetime_format)
+    yesterday = yesterday.strftime(datetime_format)
+
+    get_mcap(yesterday, enddate)
 
     em_data_mnt.download_stock_hk_hist(STOCK_PRICE_PICKLE, startdate, enddate)
     df = em_data_mnt.get_close_price_df(STOCK_PRICE_PICKLE, startdate, enddate)
