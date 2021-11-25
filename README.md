@@ -20,7 +20,7 @@ git clone git@github.com:t-tht/PairTradingScreener.git
 
 ---
 
-###Config
+### config.json
 - TRADING_DAYS_PER_YEAR: 
   - defaults to 246
   - Days to annualize return and volatility to.
