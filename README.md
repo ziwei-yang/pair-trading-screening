@@ -5,7 +5,6 @@
 
 ## Installation
 
----
 - make sure pvm works in environment
 
 ```bash
@@ -18,10 +17,11 @@ git clone git@github.com:t-tht/PairTradingScreener.git
 
 ## Usage
 
----
 ```
 usage: 
   run.sh [DAYS] [MCAP]
+    DAYS: defaults to 246
+    MCAP: defaults to 5,000,000,000
 ```
 ```
 usage: pair_screener.py [-h] [-c] [-m] days mcap
@@ -37,19 +37,8 @@ optional arguments:
 
 ```
 
-### config.json
-- TRADING_DAYS_PER_YEAR: 
-  - defaults to 246
-  - Days to annualize return and volatility to.
-
-- MARKET_CAP_THRESH
-  - defaults to 5,000,000,000
-  - Stocks below this market cap is filtered out.
-
-
 ## Output
 
----
 - top_sharpe_corr_pairs.csv
   - contains the metrics of top ranking stock long-short pairs according to its sharpe ratio.
   - highest absolute sharpe ratio & lowest absolute sharpe ratio
