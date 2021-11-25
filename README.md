@@ -16,9 +16,26 @@ git clone git@github.com:t-tht/PairTradingScreener.git
 
 
 
-## Parameters & Config
+## Usage
 
 ---
+```
+usage: 
+  run.sh [DAYS] [MCAP]
+```
+```
+usage: pair_screener.py [-h] [-c] [-m] days mcap
+
+positional arguments:
+  days             days to annualize return and volatility to
+  mcap             stocks below this market cap is filtered out
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -c, --use_cache  use cached data from sharpe_corr_pairs.pickle & discarded.pickle
+  -m, --no_mcap    turn off market cap filter
+
+```
 
 ### config.json
 - TRADING_DAYS_PER_YEAR: 
