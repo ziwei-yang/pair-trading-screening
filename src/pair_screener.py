@@ -249,8 +249,7 @@ def compute_data(use_cache=True, market_cap_filter=True) -> None:
 
     if not use_cache:
 
-        with open(MARKET_CAP_FILENAME, "rb") as f:
-            market_caps = pickle.load(f)
+
 
         df = pd.read_csv(EM_DATA_FILENAME, index_col=0)
         px = df.copy()
@@ -274,6 +273,8 @@ def compute_data(use_cache=True, market_cap_filter=True) -> None:
 
         stock = []
         if market_cap_filter:
+            with open(MARKET_CAP_FILENAME, "rb") as f:
+                market_caps = pickle.load(f)
             for stock_name in primary_stock_stats.keys():
                 if stock_name in market_caps and px[stock_name].mean() * market_caps[stock_name][
                     "outstanding"] > config["MARKET_CAP_THRESH"]:
@@ -385,6 +386,7 @@ def estimate_pairwise_timeseries_statistics(stocks: list,
     """
     metrics = {}
     for pair in permutations(stocks, 2):
+
         s1 = pair[0]
         s2 = pair[1]
 
@@ -408,11 +410,11 @@ def estimate_pairwise_timeseries_statistics(stocks: list,
         annual_sortino = pct_combined_mean / combined_dstd
 
         # correlation = covariance[s1][s2] / (stats[s1][1] * stats[s2][1])
-        correlation = correlation[s1][s2]
+        corr = correlation[s1][s2]
 
         sorted_pair_name = pair
         metrics[sorted_pair_name] = {"sharpe_ratio": annual_sharpe,
-                                     "correlation": correlation,
+                                     "correlation": corr,
                                      "sortino_ratio": annual_sortino,
                                      "annualised_pct_return": pct_combined_mean,
                                      "annualised_volatility": combined_std,
@@ -474,5 +476,5 @@ def get_downside_logret(logret: pd.DataFrame) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    compute_data(use_cache=True,
-                 market_cap_filter=True)
+    compute_data(use_cache=False,
+                 market_cap_filter=False)
