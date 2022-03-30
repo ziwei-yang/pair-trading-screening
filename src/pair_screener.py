@@ -488,6 +488,5 @@ def get_downside_logret(logret: pd.DataFrame) -> pd.DataFrame:
 if __name__ == "__main__":
     print(TRADING_DAYS_PER_YEAR)
     print(MARKET_CAP_THRESH)
-    exit()
     compute_data(use_cache=args.use_cache,
                  market_cap_filter=not args.mcap)
